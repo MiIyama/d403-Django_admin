@@ -1,0 +1,194 @@
+Django gera essa estrutura que é uma arquitetura:
+     MTV Models Template Views
+     MVC Model-View-Controller
+
+    Models
+        tudo relacionado a banco de dados - estrutura do banco de dados
+            definimos uma classe e os atributos
+            posso criar as funcoes para o banco de dados
+            makemigraion cria estrutura para o sql lite
+
+        proj Spotify 
+            apps 
+                musicas feitas pra vc
+                login
+                playlist
+
+        proj Instagram
+            stories 
+            contas
+            feed
+            explorar
+
+        test 
+            em codigod
+            unitario testa o formulario
+        
+    Template 
+        HTML 
+        pode ser usado no lugar mas n é mt bom markdown criar documentaçao usado pra criar o read me do github
+       faz parte mas não é: CSS EJS
+
+    Views
+        render renderiza o html?
+        regra de negocio - if else
+
+
+
+
+models.py-------------------------------------------------------------------------------------------------------------
+
+class Pessoa(models.Model):
+  nome = models.CharField(max_length=255)
+  cpf = models.CharField(max_length=14)
+  email = models.EmailField(
+      max_length = 255,
+      null = true #pra permitir não preencher email deixo no taamanho max e altero pelo frontend
+  )
+
+
+
+  toda vez que mexer na base rodar a migraçao de novo
+  não deletar pois o django não vai conseguir rodar
+
+********************************************
+  criei uma tupla para a choices de genero
+
+  
+  )
+  nome = models.CharField(
+    max_length=255,
+    verbose_name='Nome')
+  cpf = models.CharField(
+    max_length=255,
+    verbose_name='CPF')
+  email = models.EmailField(
+    max_length=255,
+    verbose_name='Email')
+  telefone = models.CharField(
+    max_length=255,
+    verbose_name='Telefone')
+  genero = models.CharField(
+    max_length=255,
+    verbose_name='Genero'
+    choices=GENEROS
+  )
+           -> espaco pra sa
+  ativo = models.BooleanField(
+    default=True
+  )
+  data_de_criacao = models.DateField(
+    auto_now_add=True
+  )
+
+index.html-------------------------------------------------------------------------------------------------------------
+{{msg}}
+
+<form method="POST" action="/"> # tem q ter action devido o submit e action"/" pq a pasta raiz é "" se for outra pasta /pessoas
+  {% csrf_token %}
+  <input type="text" name="nome" placeholder="Nome">   # name é igual o models
+  <input type="text" name="cpf" placeholder="CPF">
+  <input type="email" name="email" placeholder="E-mail">
+  <input type="tel" name="telefone" placeholder="Telefone">
+  <label for="genero">Genero</label>
+  <select name="genero">
+    <option value="M">Masculino</option>
+    <option value="F">Feminino</option>
+    <option value="O">Outros</option>
+  </select>
+
+  <input type="submit" value="Cadastrar">
+</form>
+
+
+views.py-------------------------------------------------------------------------------------------------------------
+from django.shortcuts import render
+from .models import Pessoa
+
+def mostrar_formulario_cadastro(request):
+  contexto = {'msg': None}
+  if request.method == 'POST':
+    pessoa = Pessoa()
+    pessoa.nome = request.POST['nome']  #igual o name
+    pessoa.cpf = request.POST['cpf']
+    pessoa.email = request.POST['email']
+    pessoa.telefone = request.POST['telefone']
+    pessoa.save()
+    contexto = {'msg' : 'Aeee parabens'}
+  return render(request, 'index.html', contexto)
+
+def mostrar_pessoas(request):
+  pessoas = Pessoa.objects.all()
+
+  return render(request, 'pessoas.html', {'dados': pessoas})
+
+  *************************************************************************************888
+  shell mexer com testes no terminal 
+
+
+  cast converter um dado em Outros
+
+  Queryselector manipula o html 
+
+
+pessoa = Pessoa.objects.all()
+  querySet retorna a lista 
+
+pessoa = Pessoa.objects.first() - primeiro
+    retorna como objeto
+      <>objeto
+
+pessoa = Pessoa.objects.filter(email='jpaulo@mastertech.tech')
+    estou filtrando
+    pessoa = Pessoa.objects.filter(email='jpaulo@mastertech.tech').first()
+    __gt maior 
+    __lt menor
+
+createsuperuser pra ter acesso ao admin
+    chama sudo no linux
+        (env) C:\Users\Renomear.DESKTOP-BS0U13S\Desktop\MiIyama\d402-sistema-banco-master>python manage.py createsuperuser
+    Username (leave blank to use 'eh132'): MiIyama
+    Email address: naomi898@gmail.com
+    Password:
+    Password (again):
+    This password is too short. It must contain at least 8 characters.
+    Bypass password validation and create user anyway? [y/N]: y
+    Superuser created successfully.
+
+    ir no admin
+        http://localhost:8000/admin/
+
+   admin.py-------------------------------------------------------------------------------------------------------------
+    
+    from django.contrib import admin
+    from . import models
+
+    # Register your models here.
+    admin.site.register(models.Pessoa)
+
+   models.py-------------------------------------------------------------------------------------------------------------
+   adicinou para retornar a string em vez de object(1)......
+      def __str__(self):
+      return self.nome + " " + self.email
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+###############################################################################################################
+buscar arquivos Ctrl P
+Cardinalidade
+  um pra muitos
+  
+
+
+
